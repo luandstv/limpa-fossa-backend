@@ -1,0 +1,27 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: limpafossa-db
+    restart: always  # Movi para dentro do serviço (estava fora no seu)
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=limpafossa_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_limpafossa_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - database  # CORREÇÃO: Deve ser igual ao nome do serviço lá em cima
+
+volumes:
+  postgres-data:
