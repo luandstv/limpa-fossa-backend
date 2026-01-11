@@ -20,11 +20,11 @@ O ambiente de desenvolvimento utiliza Docker para o banco de dados e ferramentas
 ### Serviços Docker (docker-compose.yml)
 *   **Database:** PostgreSQL rodando na porta `5432`.
     *   Database: `limpafossa_db`
-    *   User/Pass: `admin` / `admin`
+    *   User/Pass: `*****` / `******`
     *   Credenciais: Configuradas via variáveis de ambiente no `docker-compose.yml`.
 *   **PgAdmin:** Interface web para gestão do banco rodando na porta `5050`.
-    *   Login: `admin@admin.com`
-    *   Senha: `admin`
+    *   Login: `******`
+    *   Senha: `******`
     *   Credenciais: Configuradas via variáveis de ambiente no `docker-compose.yml`.
 
 ### Como Rodar o Ambiente
@@ -51,33 +51,3 @@ O ambiente de desenvolvimento utiliza Docker para o banco de dados e ferramentas
     *   `OrderMapper`: Conversão entre Entidade `Order` e DTOs (`CreateOrderDTO`, `OrderResponseDTO`), incluindo mapeamento de dados do cliente aninhado.
 *   **Dependências (`pom.xml`):**
     *   Inclusão de Spring Web, Data JPA, Validation, Security, DevTools e processadores de anotação (Lombok/MapStruct).
-
-## 📍 Endpoints da API
-
-### Clientes (`/api/customers`)
-*   `GET /api/customers`: Lista todos os clientes.
-*   `POST /api/customers`: Cria um novo cliente.
-
-### Pedidos (`/api/orders`)
-*   `GET /api/orders`: Lista pedidos (paginado).
-*   `GET /api/orders/{id}`: Busca pedido por ID.
-*   `POST /api/orders`: Cria um novo pedido.
-    **Exemplo de Body:**
-    ```json
-    {
-      "customerId": 1,
-      "distanceMeters": 60,
-      "observations": "Acesso pelo portão lateral"
-    }
-    ```
-*   `PATCH /api/orders/{id}/status`: Atualiza o status do pedido.
-    **Exemplo de Body:**
-    ```json
-    {
-      "status": "COMPLETED"
-    }
-    ```
-
-## 🔒 Segurança e CORS
-*   **CORS:** Configurado para permitir origens de desenvolvimento (`localhost:3000`, `localhost:5173`).
-*   **Segurança:** Endpoints `/api/**` configurados como públicos (`permitAll`) para ambiente de desenvolvimento.
