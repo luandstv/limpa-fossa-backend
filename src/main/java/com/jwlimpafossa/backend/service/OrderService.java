@@ -11,6 +11,8 @@ import com.jwlimpafossa.backend.repository.CustomerRepository;
 import com.jwlimpafossa.backend.repository.OrderRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +34,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDTO create(CreateOrderDTO orderDTO) {
-        Customer customer = customerRepository.findById(orderDTO.costumerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + orderDTO.costumerId()));
+        Customer customer = customerRepository.findById(orderDTO.customerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + orderDTO.customerId()));
 
         Order order = orderMapper.toEntity(orderDTO);
 
@@ -44,6 +46,33 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         return orderMapper.toResponse(savedOrder);
+    }
+
+    public Page<OrderResponseDTO> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(orderMapper::toResponse);
+    }
+
+    public OrderResponseDTO findById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem não encontrada com ID: " + id));
+        return orderMapper.toResponse(order);
+    }
+
+    @Transactional
+    public OrderResponseDTO updateStatus(Long id, OrderStatus newStatus){
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem não encontrada: " + id));
+
+        if (order.getStatus() == OrderStatus.COMPLETED && newStatus == OrderStatus.CANCELED) {
+            throw new IllegalArgumentException("Não é possível cancelar uma ordem já finalizada.");
+        }
+
+        order.setStatus(newStatus);
+
+        Order saved = orderRepository.save(order);
+
+        return orderMapper.toResponse(saved);
     }
 
     private BigDecimal calculatePrice(Integer distance) {
